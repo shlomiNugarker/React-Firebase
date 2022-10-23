@@ -54,7 +54,7 @@ async function initFirebase() {
   const app = initializeApp(firebaseConfig)
 }
 
-async function addDocument(collectionName, document) {
+async function addDocument(collectionName: string, document: any) {
   const db = getFirestore()
   try {
     const docRef = await addDoc(collection(db, collectionName), document)
@@ -66,7 +66,7 @@ async function addDocument(collectionName, document) {
   }
 }
 
-async function getDocument(collectionName, id) {
+async function getDocument(collectionName: string, id: string) {
   const db = getFirestore()
   const snap = await getDoc(doc(db, collectionName, id))
   if (!snap.exists()) {
@@ -77,23 +77,23 @@ async function getDocument(collectionName, id) {
   return docToReturn
 }
 
-async function saveDocument(collectionName, document, id) {
+async function saveDocument(collectionName: string, document: any, id: string) {
   const db = getFirestore()
   // returns undefined
   await setDoc(doc(db, collectionName, id), document, { merge: true })
 }
 
-async function getDocuments(collectionName, filterBy = {}) {
+async function getDocuments(collectionName: string, filterBy = {}) {
   const db = getFirestore()
   var collectionRef = collection(db, collectionName)
   var orderByParams = []
 
-  if (filterBy.byUserId) {
-    collectionRef = query(
-      collectionRef,
-      where('byUser.id', '==', filterBy.byUserId)
-    )
-  }
+  // if (filterBy?.byUserId) {
+  //   collectionRef = query(
+  //     collectionRef,
+  //     where('byUser.id', '==', filterBy.byUserId)
+  //   )
+  // }
 
   // collectionRef = query(collectionRef, limit(pageSize))
   // if (filterBy.pageNo && gLastDocForPaging) {
@@ -102,7 +102,7 @@ async function getDocuments(collectionName, filterBy = {}) {
 
   const querySnapshot = await getDocs(collectionRef)
   //   gLastDocForPaging = querySnapshot.docs[querySnapshot.docs.length - 1]
-  const docs = []
+  const docs: { id: string }[] = []
   querySnapshot.forEach((doc) => {
     // console.log(`${doc.id} => ${JSON.stringify(doc.data())}`)
     docs.push({ id: doc.id, ...doc.data() })
@@ -110,9 +110,9 @@ async function getDocuments(collectionName, filterBy = {}) {
   return docs
 }
 
-function subscribe(collectionName, cb) {
+function subscribe(collectionName: string, cb: Function) {
   const db = getFirestore()
-  const docs = []
+  const docs: { id: string }[] = []
   const unsub = onSnapshot(collection(db, collectionName), (querySnapshot) => {
     // console.log("Current data: ", querySnapshot.docs);
     querySnapshot.forEach((doc) => {
@@ -125,7 +125,7 @@ function subscribe(collectionName, cb) {
 
 // Auth
 
-async function signUp(email, password) {
+async function signUp(email: string, password: string) {
   try {
     const auth = getAuth()
     const userCredential = await createUserWithEmailAndPassword(
@@ -137,13 +137,12 @@ async function signUp(email, password) {
     console.log('Signed in, user:', user)
     return user
   } catch (error) {
-    const errorCode = error.code
-    const errorMessage = error.message
-    console.log({ errorCode, errorMessage })
+    if (error instanceof Error) console.log(error.message)
+    else console.log(error)
   }
 }
 
-async function signIn(email, password) {
+async function signIn(email: string, password: string) {
   try {
     const auth = getAuth()
     const userCredential = await signInWithEmailAndPassword(
@@ -155,9 +154,8 @@ async function signIn(email, password) {
     console.log('Signed in, user:', user)
     return user
   } catch (error) {
-    const errorCode = error.code
-    const errorMessage = error.message
-    console.log({ errorCode, errorMessage })
+    if (error instanceof Error) console.log(error.message)
+    else console.log(error)
   }
 }
 
@@ -171,21 +169,26 @@ async function doSignOut() {
   }
 }
 
-async function ResetPasswordByEmail(email) {
+async function ResetPasswordByEmail(email: string) {
   try {
     const auth = getAuth()
     await sendPasswordResetEmail(auth, email)
     console.log('Password reset email sent!')
   } catch (error) {
-    const errorCode = error.code
-    const errorMessage = error.message
-    console.log({ errorCode, errorMessage })
+    if (error instanceof Error) console.log(error.message)
+    else console.log(error)
   }
 }
 
 async function sendVerificationByEmail() {
-  const auth = getAuth()
-  await sendEmailVerification(auth.currentUser).then(() => {
-    console.log('Email verification sent!')
-  })
+  try {
+    const auth = getAuth()
+    if (auth.currentUser) {
+      await sendEmailVerification(auth.currentUser)
+      console.log('Email verification sent!')
+    }
+  } catch (error) {
+    if (error instanceof Error) console.log(error.message)
+    else console.log(error)
+  }
 }
