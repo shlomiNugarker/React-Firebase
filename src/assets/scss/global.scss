@@ -1,0 +1,30 @@
+// Externals
+
+// Setup
+@import 'setup/variables';
+@import 'setup/functions';
+@import 'setup/mixins';
+
+// Basics
+@import 'basics/animations';
+@import 'basics/base';
+@import 'basics/helpers';
+@import 'basics/layout';
+@import 'basics/typography';
+
+// Pages
+
+// Components
+
+.temp-nav {
+  ul {
+    margin: 0;
+    justify-content: center;
+    display: flex;
+    li {
+      margin: 0 5px;
+      padding: 15px;
+      list-style: none;
+    }
+  }
+}
