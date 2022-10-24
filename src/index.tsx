@@ -6,10 +6,6 @@ import reportWebVitals from './reportWebVitals'
 
 import { HashRouter as Router } from 'react-router-dom'
 
-import 'primereact/resources/themes/md-light-indigo/theme.css' //theme
-import 'primereact/resources/primereact.min.css' //core css
-import 'primeicons/primeicons.css' //icons
-
 const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement)
 root.render(
   <React.StrictMode>

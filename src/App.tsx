@@ -5,21 +5,22 @@ import './assets/scss/global.scss'
 import { About } from './pages/About'
 import { Home } from './pages/Home'
 import { Main } from './pages/Main'
-import { firebaseService } from './services/firebase.service'
+import { firebaseAuthService } from './services/firebaseAuthService'
+import { firebaseDBService } from './services/firebaseDBService'
 
 const App = () => {
-  const initFirebase = () => {
-    firebaseService.initFirebase()
+  const initFirebase = async () => {
+    await firebaseDBService.initFirebase()
   }
 
   const onSignUp = () => {
-    firebaseService.signUp('shlomi@gmail.com', '123456')
+    firebaseAuthService.signUp('shlomi@gmail.com', '123456')
   }
   const onSignIn = async () => {
-    firebaseService.signIn('shlomin1231@gmail.com', '123456')
+    firebaseAuthService.signIn('shlomin1231@gmail.com', '123456')
   }
   const onSignOut = async () => {
-    firebaseService.doSignOut()
+    firebaseAuthService.doSignOut()
   }
 
   useEffect(() => {
