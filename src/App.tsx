@@ -37,7 +37,6 @@ const App = () => {
   const getConnectedUser = () => {
     const user: User | null = firebaseAuthService.getLoggedInUser()
     setLoggedInUser(user)
-    console.log(user)
   }
 
   useEffect(() => {
