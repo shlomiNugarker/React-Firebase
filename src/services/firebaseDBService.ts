@@ -49,8 +49,10 @@ async function updateDocument(
     return await updateDoc(docRef, document)
   } catch (error) {
     console.log(error)
+    throw Error('updateDocument')
   }
 }
+
 async function deleteDocument(collectionName: string, id: string) {
   const db = getFirestore()
   try {
@@ -58,6 +60,7 @@ async function deleteDocument(collectionName: string, id: string) {
     await deleteDoc(docRef)
   } catch (error) {
     console.log(error)
+    throw Error('deleteDocument')
   }
 }
 
