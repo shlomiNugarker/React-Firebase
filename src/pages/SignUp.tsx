@@ -40,6 +40,18 @@ export const SignUp = (props: any) => {
       setIsLoading(false)
     }
   }
+  const onSignInWithGithub = async () => {
+    try {
+      setIsLoading(true)
+      const loggedUser = await firebaseAuthService.signInWithGithub()
+      props.setLoggedInUser(loggedUser)
+      navigate('/main')
+    } catch (err) {
+      console.log(err)
+    } finally {
+      setIsLoading(false)
+    }
+  }
   const onSignInWithFacebook = async () => {
     try {
       setIsLoading(true)
@@ -95,7 +107,9 @@ export const SignUp = (props: any) => {
           </div>
 
           <button onClick={onSignUpWithGoogle}>Sign up with google</button>
-          <button onClick={onSignInWithFacebook}>Sign in with Facebook</button>
+          <button onClick={onSignInWithFacebook}>Sign up with Facebook</button>
+          <button onClick={onSignInWithGithub}>Sign up with Github</button>
+
           <span className="loading">{isLoading && <div>Loading...</div>}</span>
         </div>
       </div>

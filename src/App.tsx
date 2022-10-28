@@ -1,10 +1,4 @@
-import {
-  HashRouter as Router,
-  Route,
-  Link,
-  Routes,
-  useNavigate,
-} from 'react-router-dom'
+import { Route, Link, Routes, useNavigate } from 'react-router-dom'
 
 import { useEffect, useState } from 'react'
 import './assets/scss/global.scss'
@@ -46,6 +40,9 @@ const App = () => {
 
   if (!isAppInitialed) return <div> Loading firebase...</div>
 
+  console.log('render App')
+  console.log({ loggedInUser })
+
   return (
     <>
       <nav className="temp-nav">
@@ -71,13 +68,13 @@ const App = () => {
 
         {loggedInUser && (
           <div>
-            <p>Hello, {loggedInUser.displayName}</p>
+            <p>Hello, {loggedInUser.displayName || loggedInUser.phoneNumber}</p>
             <button onClick={onSignOut}>Logout</button>
           </div>
         )}
       </nav>
       <Routes>
-        <Route path="/main" element={<Main />} />
+        <Route path="/main" element={<Main loggedInUser={loggedInUser} />} />
         <Route path="/about" element={<About />} />
         <Route
           path="/sign-in"

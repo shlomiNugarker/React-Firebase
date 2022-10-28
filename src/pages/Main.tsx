@@ -5,7 +5,7 @@ import { useRef, RefObject, useState, useEffect } from 'react'
 import { firebaseAuthService } from '../services/firebaseAuthService'
 import { firebaseDBService } from '../services/firebaseDBService'
 
-export const Main = () => {
+export const Main = (props: any) => {
   const [robots, setRobots] = useState<DocumentData[] | null>(null)
   const inputRef: RefObject<HTMLInputElement> = useRef(null)
 
@@ -51,8 +51,16 @@ export const Main = () => {
   }
 
   useEffect(() => {
-    onGetDocs()
-  }, [])
+    if (props.loggedInUser) onGetDocs()
+  }, [props.loggedInUser])
+
+  if (!props.loggedInUser) {
+    return (
+      <div className="main-page">
+        <p className="loading">Please login...</p>
+      </div>
+    )
+  }
 
   if (!robots)
     return (

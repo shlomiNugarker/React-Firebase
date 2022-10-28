@@ -1,3 +1,4 @@
+import { async } from '@firebase/util'
 import { FirebaseError } from 'firebase/app'
 import {
   getAuth,
@@ -12,6 +13,11 @@ import {
   signInWithPopup,
   GoogleAuthProvider,
   FacebookAuthProvider,
+  RecaptchaVerifier,
+  ConfirmationResult,
+  GithubAuthProvider,
+  signInWithPhoneNumber,
+  PhoneAuthProvider,
 } from 'firebase/auth'
 
 export const firebaseAuthService = {
@@ -27,6 +33,9 @@ export const firebaseAuthService = {
   signInWithGoogle,
   signInWithFacebook,
   getLoggedInUser,
+  signInWithGithub,
+  signInByPhoneNumber,
+  confirmSignInPhoneCode,
 }
 
 function getLoggedInUser() {
@@ -201,5 +210,76 @@ async function signInWithFacebook() {
       throw Error(error.message)
     }
     throw Error('cant signInWithGoogle')
+  }
+}
+
+async function signInWithGithub() {
+  const provider = new GithubAuthProvider()
+  provider.addScope('repo')
+
+  try {
+    const auth = getAuth()
+    const res = await signInWithPopup(auth, provider)
+    const credential = GithubAuthProvider.credentialFromResult(res)
+    if (credential) {
+      const token = credential.accessToken
+    }
+    const signedInUser = res.user
+    return signedInUser
+  } catch (error) {
+    console.log(error)
+    if (error instanceof FirebaseError) {
+      const errorCode = error.code
+      const errorMessage = error.message
+      const email = error.customData?.email
+      const credential = FacebookAuthProvider.credentialFromError(error)
+      console.log({ errorCode, errorMessage, email, credential })
+      throw Error(error.message)
+    }
+    throw Error('cant signInWithGoogle')
+  }
+}
+
+declare global {
+  interface Window {
+    recaptchaVerifier: RecaptchaVerifier
+    recaptchaWidgetId: any
+    confirmationResult: ConfirmationResult
+  }
+}
+window.recaptchaVerifier = window.recaptchaVerifier || {}
+async function signInByPhoneNumber(phoneNumber: string) {
+  const auth = getAuth()
+  const appVerifier = window.recaptchaVerifier
+  try {
+    const confirmationResult = await signInWithPhoneNumber(
+      auth,
+      phoneNumber,
+      appVerifier
+    )
+    // window.confirmationResult = confirmationResult
+    return confirmationResult
+  } catch (error) {
+    console.log(error)
+    throw Error('cant signInByPhoneNumber()')
+  }
+}
+async function confirmSignInPhoneCode(
+  confirmationResult: ConfirmationResult,
+  code: string
+) {
+  if (!code) return
+  try {
+    const res = await confirmationResult.confirm(code)
+    const user = res.user
+    var authCredential = PhoneAuthProvider.credential(
+      confirmationResult.verificationId,
+      code
+    )
+
+    return user
+  } catch (error) {
+    console.log(error)
+    throw Error('cant confirmSignInPhoneCode()')
   }
 }
